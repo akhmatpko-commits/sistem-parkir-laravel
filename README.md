@@ -1,58 +1,180 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Parkir - Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web untuk membantu pengelolaan parkir kendaraan. Sistem menyediakan pengelolaan data kendaraan, tarif, area parkir, transaksi masuk dan keluar, pembayaran, laporan, serta pencatatan aktivitas.
 
-## About Laravel
+## Teknologi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Berdasarkan konfigurasi proyek:
+- PHP `^8.3`
+- Laravel `^13.0`
+- Composer
+- Node.js dan NPM
+- Vite dan Tailwind CSS
+- Database: SQLite sebagai konfigurasi bawaan pada `.env.example`; konfigurasi dapat disesuaikan ke MySQL melalui `.env`.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Hak Akses
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Role | Fitur utama |
+|---|---|
+| Admin | Dashboard admin, kelola akun Admin/Petugas, CRUD kendaraan, tarif, area parkir, operasional transaksi, dan log aktivitas |
+| Owner | Dashboard owner, melihat transaksi dan laporan |
+| Petugas | Dashboard petugas, operasional kendaraan masuk/keluar, melihat transaksi, dan mencetak struk |
 
-## Learning Laravel
+## Fitur Aplikasi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Login dan logout.
+- Dashboard berdasarkan role.
+- Pengelolaan akun pengguna oleh Admin.
+- CRUD data kendaraan.
+- CRUD tarif parkir.
+- CRUD area parkir.
+- Pencatatan kendaraan masuk.
+- Proses kendaraan keluar (checkout).
+- Perhitungan biaya parkir dan proses pembayaran.
+- Daftar dan detail transaksi.
+- Cetak/lihat struk pembayaran.
+- Laporan transaksi.
+- Log aktivitas khusus Admin.
+- Pembatasan halaman berdasarkan role melalui middleware.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Persyaratan
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- PHP 8.3 atau versi yang memenuhi `composer.json`.
+- Composer.
+- Node.js dan NPM.
+- SQLite atau MySQL.
+- Web browser.
 
-## Agentic Development
+## Cara Instalasi
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+1. Clone repository:
+
+   ```bash
+   git clone https://github.com/akhmatpko-commits/sistem-parkir-laravel.git
+   cd sistem-parkir-laravel
+   ```
+
+2. Install dependency:
+
+   ```bash
+   composer install
+   npm install
+   ```
+
+3. Buat file environment.
+
+   Windows PowerShell:
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+   Linux/macOS/Git Bash:
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Buat application key:
+
+   ```bash
+   php artisan key:generate
+   ```
+
+5. Siapkan database.
+
+   Untuk SQLite, pastikan file `database/database.sqlite` tersedia dan `.env` menggunakan `DB_CONNECTION=sqlite`.
+
+   Untuk MySQL, buat database terlebih dahulu lalu sesuaikan konfigurasi berikut pada `.env`:
+
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nama_database
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+6. Jalankan migration dan seeder:
+
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+   Seeder yang dipanggil oleh `DatabaseSeeder`: `KendaraanSeeder`, `TarifSeeder`, dan `UserSeeder`. Periksa file `UserSeeder` untuk mengetahui akun awal yang dibuat.
+
+7. Build aset frontend:
+
+   ```bash
+   npm run build
+   ```
+
+## Menjalankan Aplikasi
+
+Jalankan server Laravel:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Kemudian buka http://127.0.0.1:8000 pada browser.
 
-## Contributing
+Untuk pengembangan frontend, jalankan:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+npm run dev
+```
 
-## Code of Conduct
+## Alur Penggunaan Singkat
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Login menggunakan akun yang tersedia.
+2. Admin menyiapkan data pengguna, kendaraan, tarif, dan area parkir.
+3. Admin atau Petugas mencatat kendaraan masuk.
+4. Saat kendaraan keluar, Admin atau Petugas memproses checkout.
+5. Sistem memproses biaya parkir dan pembayaran.
+6. Struk transaksi dapat dibuka/cetak.
+7. Owner dan Admin dapat melihat laporan transaksi.
 
-## Security Vulnerabilities
+## Pengujian
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Jalankan pengujian otomatis dengan:
 
-## License
+```bash
+php artisan test
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Pengujian manual yang disarankan:
+- Login/logout setiap role.
+- Pastikan Admin, Owner, dan Petugas hanya dapat mengakses halaman sesuai haknya.
+- Tambah, ubah, dan hapus data kendaraan, tarif, area, dan pengguna.
+- Uji transaksi kendaraan masuk dan keluar.
+- Uji perhitungan biaya dan pembayaran.
+- Periksa struk pembayaran.
+- Uji filter laporan berdasarkan waktu/periode.
+- Pastikan log aktivitas hanya dapat dibuka Admin.
+
+Catat hasil setiap pengujian berdasarkan hasil tes yang benar-benar dilakukan.
+
+## Struktur Folder Penting
+
+| Lokasi | Kegunaan |
+|---|---|
+| `app/Models` | Model data |
+| `app/Http/Controllers` | Logika aplikasi |
+| `app/Http/Middleware` | Pembatasan akses |
+| `database/migrations` | Struktur tabel |
+| `database/seeders` | Data awal |
+| `resources/views` | Tampilan Blade |
+| `routes/web.php` | Route aplikasi |
+| `tests` | Pengujian otomatis |
+
+## Keamanan dan Catatan
+
+- Jangan pernah mengunggah file `.env`, password, token, atau kredensial database.
+- Folder `vendor` dan `node_modules` tidak perlu dimasukkan ke repository.
+- Jangan mengunggah data pribadi atau data transaksi asli.
+- README ini menjelaskan fitur berdasarkan route dan konfigurasi proyek. Status berhasil/gagal setiap fitur harus mengikuti hasil pengujian aplikasi.
+
+## Lisensi
+
+Lisensi proyek belum ditentukan. Tambahkan file `LICENSE` jika ingin menetapkan ketentuan penggunaan dan distribusi.
