@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class ParkingController extends Controller
 {
-    // Daftar kendaraan yang sedang parkir
+    // DAFTAR KENDARAAN YANG SEDANG PARKIR
     public function index(Request $request)
     {
         $query = ParkingTransaction::with('parkingArea')
@@ -26,20 +26,42 @@ class ParkingController extends Controller
         return view('parking.index', compact('transaksi'));
     }
 
-    // Form kendaraan masuk
+    // DAFTAR KENDARAAN YANG SUDAH KELUAR
+    public function keluar(Request $request)
+    {
+        $query = ParkingTransaction::with([
+            'parkingArea',
+            'payment'
+        ])
+        ->where('status', 'keluar');
+
+        if ($request->filled('search')) {
+            $query->where(
+                'plate_number',
+                'like',
+                '%' . $request->search . '%'
+            );
+        }
+
+        $transaksi = $query->latest()->paginate(10);
+
+        return view('parking.index', compact('transaksi'));
+    }
+
+    // FORM KENDARAAN MASUK
     public function create()
     {
         return redirect()->route('transactions.create');
     }
 
-    // Simpan kendaraan masuk
+    // SIMPAN KENDARAAN MASUK
     public function store(Request $request)
     {
         return app(ParkingTransactionController::class)
             ->store($request);
     }
 
-    // Kendaraan keluar
+    // KENDARAAN KELUAR
     public function checkout($id)
     {
         $transaksi = ParkingTransaction::findOrFail($id);

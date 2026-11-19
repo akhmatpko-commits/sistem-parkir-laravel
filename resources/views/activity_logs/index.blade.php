@@ -215,9 +215,10 @@
 
             </div>
 
-            <div class="mt-3">
-                {{ $logs->links() }}
-            </div>
+            <div class="mt-3 d-flex justify-content-end">
+    {{ $logs->links('pagination::bootstrap-5') }}
+</div>
+
 
         </div>
 

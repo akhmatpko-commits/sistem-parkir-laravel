@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PetugasSlotParkirController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\TarifController;
@@ -23,11 +24,12 @@ Route::get('/', function () {
 // LOGIN
 Route::middleware('guest')->group(function () {
 
-    Route::get('/login', [AuthController::class, 'showLogin'])
-        ->name('login');
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('login.process');
+    // REGISTER PUBLIK
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'publicStore'])->name('register.submit');
 
 });
 
@@ -38,10 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('logout');
 
-
-    // =====================================
     // DASHBOARD OWNER
-    // =====================================
     Route::middleware('role:owner')->group(function () {
 
         Route::get('/owner/dashboard', [DashboardController::class, 'owner'])
@@ -49,15 +48,14 @@ Route::middleware('auth')->group(function () {
 
     });
 
-
-    // =====================================
     // FITUR KHUSUS ADMIN
-    // =====================================
     Route::middleware('role:admin')->group(function () {
 
         Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
             ->name('admin.dashboard');
 
+        Route::delete('/transactions/{transaction}', [ParkingTransactionController::class, 'destroy'])
+            ->name('transactions.destroy');
 
         // REGISTER ADMIN / PETUGAS
         Route::get('/admin/register', [RegisterController::class, 'create'])
@@ -66,26 +64,21 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/register', [RegisterController::class, 'store'])
             ->name('register.store');
 
-
         // CRUD USER
         Route::resource('users', UserController::class)
             ->except(['show']);
-
 
         // CRUD KENDARAAN
         Route::resource('kendaraan', KendaraanController::class)
             ->except(['show']);
 
-
         // CRUD TARIF
         Route::resource('tarif', TarifController::class)
             ->except(['show']);
 
-
         // CRUD AREA PARKIR
         Route::resource('areas', ParkingAreaController::class)
             ->except(['show']);
-
 
         // LOG AKTIVITAS KHUSUS ADMIN
         Route::get('/admin/activity-logs', [
@@ -95,10 +88,7 @@ Route::middleware('auth')->group(function () {
 
     });
 
-
-    // =====================================
     // LAPORAN OWNER DAN ADMIN
-    // =====================================
     Route::middleware('role:owner,admin')->group(function () {
 
         Route::get('/reports', [ReportController::class, 'index'])
@@ -106,34 +96,32 @@ Route::middleware('auth')->group(function () {
 
     });
 
+    // DASHBOARD DAN SLOT PARKIR PETUGAS
+Route::middleware('role:petugas')->group(function () {
 
-    // =====================================
-    // DASHBOARD PETUGAS
-    // =====================================
-    Route::middleware('role:petugas')->group(function () {
+    Route::get('/petugas/dashboard', [DashboardController::class, 'petugas'])
+        ->name('petugas.dashboard');
 
-        Route::get('/petugas/dashboard', [DashboardController::class, 'petugas'])
-            ->name('petugas.dashboard');
+    // SLOT PARKIR - HANYA MELIHAT DATA
+    Route::get('/petugas/slot-parkir', [PetugasSlotParkirController::class, 'index'])
+        ->name('petugas.slot-parkir');
+
+});
 
     });
 
-
-    // =====================================
     // MELIHAT TRANSAKSI
     // OWNER, ADMIN, DAN PETUGAS
-    // =====================================
     Route::middleware('role:owner,admin,petugas')->group(function () {
 
         // DAFTAR TRANSAKSI
         Route::get('/transactions', [ParkingTransactionController::class, 'index'])
             ->name('transactions.index');
 
-
         // DETAIL TRANSAKSI
         Route::get('/transactions/{transaction}', [ParkingTransactionController::class, 'show'])
             ->whereNumber('transaction')
             ->name('transactions.show');
-
 
         // CETAK STRUK
         Route::get('/transactions/{transaction}/receipt', [ParkingTransactionController::class, 'receipt'])
@@ -141,54 +129,45 @@ Route::middleware('auth')->group(function () {
 
     });
 
-
-    // =====================================
     // OPERASIONAL PARKIR
     // ADMIN DAN PETUGAS
-    // =====================================
     Route::middleware('role:admin,petugas')->group(function () {
 
         // FORM KENDARAAN MASUK
         Route::get('/transactions/create', [ParkingTransactionController::class, 'create'])
             ->name('transactions.create');
 
-
         // SIMPAN KENDARAAN MASUK
         Route::post('/transactions', [ParkingTransactionController::class, 'store'])
             ->name('transactions.store');
-
-
-        // HAPUS TRANSAKSI
-        Route::delete('/transactions/{transaction}', [ParkingTransactionController::class, 'destroy'])
-            ->name('transactions.destroy');
-
 
         // FORM CHECKOUT
         Route::get('/transactions/{transaction}/checkout', [ParkingTransactionController::class, 'checkout'])
             ->name('transactions.checkout');
 
-
         // PROSES PEMBAYARAN
         Route::post('/transactions/{transaction}/checkout', [ParkingTransactionController::class, 'processCheckout'])
             ->name('transactions.processCheckout');
 
-
-        // DAFTAR KENDARAAN PARKIR
+        // DAFTAR KENDARAAN YANG MASIH PARKIR
         Route::get('/parking', [ParkingController::class, 'index'])
             ->name('parking.index');
 
+        // DATA KENDARAAN YANG SUDAH KELUAR
+        Route::get('/parking/keluar', [ParkingController::class, 'keluar'])
+            ->name('parking.keluar');
 
+        // FORM KENDARAAN MASUK (ALIAS LAMA)
         Route::get('/parking/create', [ParkingController::class, 'create'])
             ->name('parking.create');
 
-
+        // SIMPAN KENDARAAN MASUK (ALIAS LAMA)
         Route::post('/parking', [ParkingController::class, 'store'])
             ->name('parking.store');
 
-
+        // CHECKOUT KENDARAAN (ALIAS LAMA)
         Route::post('/parking/{id}/checkout', [ParkingController::class, 'checkout'])
             ->name('parking.checkout');
 
     });
 
-});

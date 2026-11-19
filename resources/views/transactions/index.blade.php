@@ -138,17 +138,31 @@
 
         <div class="header-buttons">
 
-            {{-- TOMBOL KEMBALI KE DASHBOARD --}}
-            <a href="{{ route('admin.dashboard') }}"
-               class="btn dark">
-                ← Kembali ke Dashboard
-            </a>
+            {{-- TOMBOL KEMBALI SESUAI ROLE --}}
+            @if(auth()->user()->role === 'admin')
+                <a href="{{ route('admin.dashboard') }}"
+                   class="btn dark">
+                    ← Kembali ke Dashboard
+                </a>
+            @elseif(auth()->user()->role === 'petugas')
+                <a href="{{ route('petugas.dashboard') }}"
+                   class="btn dark">
+                    ← Kembali ke Dashboard
+                </a>
+            @elseif(auth()->user()->role === 'owner')
+                <a href="{{ route('owner.dashboard') }}"
+                   class="btn dark">
+                    ← Kembali ke Dashboard
+                </a>
+            @endif
 
-            {{-- TOMBOL KENDARAAN MASUK --}}
-            <a href="{{ route('transactions.create') }}"
-               class="btn blue">
-                + Kendaraan Masuk
-            </a>
+            {{-- TOMBOL KENDARAAN MASUK UNTUK ADMIN DAN PETUGAS --}}
+            @if(in_array(auth()->user()->role, ['admin', 'petugas']))
+                <a href="{{ route('transactions.create') }}"
+                   class="btn blue">
+                    + Kendaraan Masuk
+                </a>
+            @endif
 
         </div>
     </div>
@@ -239,19 +253,28 @@
                     <td>
                         <div class="actions">
 
+                            {{-- TOMBOL DETAIL UNTUK SEMUA ROLE --}}
                             <a href="{{ route('transactions.show', $transaction->id) }}"
                                class="btn gray">
                                 Detail
                             </a>
 
-                            @if($transaction->status == 'masuk')
+                            {{-- CHECKOUT UNTUK ADMIN DAN PETUGAS --}}
+                            @if(
+                                $transaction->status == 'masuk' &&
+                                in_array(auth()->user()->role, ['admin', 'petugas'])
+                            )
                                 <a href="{{ route('transactions.checkout', $transaction->id) }}"
                                    class="btn green">
                                     Checkout
                                 </a>
                             @endif
 
-                            @if($transaction->status == 'keluar')
+                            {{-- TOMBOL HAPUS KHUSUS ADMIN --}}
+                            @if(
+                                auth()->user()->role === 'admin' &&
+                                $transaction->status == 'keluar'
+                            )
                                 <form action="{{ route('transactions.destroy', $transaction->id) }}"
                                       method="POST"
                                       onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">

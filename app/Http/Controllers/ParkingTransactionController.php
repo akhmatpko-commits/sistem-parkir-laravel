@@ -105,7 +105,7 @@ class ParkingTransactionController extends Controller
                 'ticket_code' => 'PKR-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(5)),
                 'plate_number' => $plateNumber,
                 'vehicle_type' => $validated['vehicle_type'],
-                'entry_time' => now(),
+                'entry_time' => now('Asia/Jakarta'),
                 'exit_time' => null,
                 'parking_fee' => 0,
                 'status' => 'masuk',

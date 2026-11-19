@@ -59,6 +59,12 @@
             background: #1e40af;
             color: white;
         }
+
+        .btn-register {
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -150,6 +156,13 @@
             <i class="bi bi-box-arrow-in-right me-2"></i>
             Login
         </button>
+
+        {{-- TOMBOL REGISTER --}}
+        <a href="{{ route('register') }}"
+           class="btn btn-outline-success btn-register w-100 mt-2">
+            <i class="bi bi-person-plus me-2"></i>
+            Register
+        </a>
 
     </form>
 
